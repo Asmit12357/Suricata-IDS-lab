@@ -1,0 +1,90 @@
+%YAML 1.1
+---
+
+# -----------------------------
+# Network Variables
+# -----------------------------
+vars:
+  address-groups:
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8]"
+    EXTERNAL_NET: "!$HOME_NET"
+
+# -----------------------------
+# Rule Configuration
+# -----------------------------
+default-rule-path: ./configs
+
+rule-files:
+  - custom.rules
+
+# -----------------------------
+# Logging Outputs
+# -----------------------------
+outputs:
+
+  # Fast log (human-readable alerts)
+  - fast:
+      enabled: yes
+      filename: logs/fast.log
+      append: yes
+
+  # Eve JSON log (structured logging)
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: logs/eve.json
+      append: yes
+
+      types:
+        - alert:
+            payload: yes
+            payload-printable: yes
+            metadata: yes
+            tagged-packets: yes
+
+        - http
+        - dns
+        - icmp
+        - flow
+
+# -----------------------------
+# Logging Settings
+# -----------------------------
+logging:
+  default-log-level: notice
+
+  outputs:
+    - console:
+        enabled: yes
+
+# -----------------------------
+# Packet Capture (Live Mode)
+# -----------------------------
+af-packet:
+  - interface: eth0
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+
+# -----------------------------
+# PCAP File Processing
+# -----------------------------
+pcap:
+  - checksum-checks: auto
+
+# -----------------------------
+# Detection Engine
+# -----------------------------
+detect:
+  profile: medium
+
+# -----------------------------
+# Threading (Performance)
+# -----------------------------
+threading:
+  set-cpu-affinity: no
+
+# -----------------------------
+# Misc
+# -----------------------------
+runmode: autofp
